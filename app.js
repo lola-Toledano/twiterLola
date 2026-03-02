@@ -74,9 +74,10 @@ async function fetchPosts() {
     list.innerHTML = posts.map(post => {
         const likeCount = post.likes ? post.likes.length : 0;
         const hasLiked = post.likes ? post.likes.some(l => l.device_id === deviceId) : false;
+        const isFeatured = post.is_featured || false;
 
         return `
-            <div class="glass card fade-in" id="post-${post.id}">
+            <div class="glass card fade-in ${isFeatured ? 'card-featured' : ''}" id="post-${post.id}">
                 <p class="post-content">${post.content}</p>
                 <div class="post-meta">
                     <span>${new Date(post.created_at).toLocaleDateString()}</span>
@@ -84,14 +85,31 @@ async function fetchPosts() {
                         <button class="action-btn btn-like" onclick="handleLikePost('${post.id}')" style="opacity: ${hasLiked ? '1' : '0.6'}">
                             ${hasLiked ? '❤️' : '🤍'} ${likeCount}
                         </button>
-                        ${post.author_id === deviceId ?
-                `<button class="action-btn btn-delete" onclick="handleDeletePost('${post.id}')">🗑️</button>` :
-                ''}
+                        ${post.author_id === deviceId ? `
+                            <button class="action-btn btn-star ${isFeatured ? 'active' : ''}" onclick="handleToggleFeature('${post.id}', ${isFeatured})">
+                                ${isFeatured ? '⭐' : '☆'}
+                            </button>
+                            <button class="action-btn btn-delete" onclick="handleDeletePost('${post.id}')">🗑️</button>
+                        ` : ''}
                     </div>
                 </div>
             </div>
         `;
     }).join('');
+}
+
+async function handleToggleFeature(postId, currentStatus) {
+    const { error } = await api
+        .from('posts')
+        .update({ is_featured: !currentStatus })
+        .eq('id', postId)
+        .eq('author_id', deviceId);
+
+    if (error) {
+        alert("Error al destacar: " + error.message);
+    } else {
+        fetchPosts(); // Refrescar vista
+    }
 }
 
 async function handleLikePost(postId) {

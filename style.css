@@ -55,6 +55,7 @@ h1 {
     cursor: pointer;
     background: linear-gradient(45deg, var(--accent), #bc8cff);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -158,6 +159,30 @@ nav {
 
 .btn-delete {
     color: #8b949e;
+}
+
+.btn-star {
+    color: #8b949e;
+}
+
+.btn-star.active {
+    color: #e3b341;
+}
+
+.card-featured {
+    background: linear-gradient(135deg, #fceabb 0%, #f8b500 100%);
+    color: #0d1117;
+    border: none;
+}
+
+.card-featured .post-meta,
+.card-featured .action-btn {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.card-featured h1,
+.card-featured p {
+    color: #0d1117;
 }
 
 /* --- FORMULARIO --- */
